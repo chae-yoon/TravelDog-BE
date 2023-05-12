@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'accounts',
     'places',
     'rest_framework',
+    'rest_framework_simplejwt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -131,3 +132,9 @@ AUTH_USER_MODEL = 'accounts.User'
 
 MEDIA_ROOT = [BASE_DIR / 'media']
 MEDIA_URL = '/media/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
