@@ -4,9 +4,23 @@ from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.hashers import check_password
-from .serializers import UserLoginSerializer
+from .serializers import UserCreateSerializer, UserLoginSerializer
 
 # Create your views here.
+User = get_user_model()
+
+@api_view(['POST'])
+def account(request):
+    if request.method == 'POST':
+        serializer = UserCreateSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response({"message": "가입 형식에 맞지 않습니다."}, status=status.HTTP_409_CONFLICT)
+
+        if User.objects.filter(username=serializer.validated_data['username']).first() is None:
+            serializer.save()
+            return Response({"message": "ok"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "중복된 아이디가 있습니다."}, status=status.HTTP_409_CONFLICT)
+
 @api_view(['GET', 'POST'])
 def login(request):
     if request.method == 'GET':
@@ -17,7 +31,6 @@ def login(request):
         username = request.data['username']
         password = request.data['password']
 
-        User = get_user_model()
         user = User.objects.filter(username=username).first()
 
         # 만약 username에 맞는 user가 존재하지 않는다면,
