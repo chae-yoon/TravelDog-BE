@@ -69,3 +69,13 @@ def login(request):
             return Response(
                 {"message": "로그인에 실패하였습니다."}, status=status.HTTP_400_BAD_REQUEST
             )
+        
+@api_view(['POST'])
+def logout(request):
+    if request.method == 'POST':
+        response = Response({
+        "message": "로그아웃 했습니다."
+        }, status=status.HTTP_202_ACCEPTED)
+        response.delete_cookie('refresh_token')
+
+    return response
