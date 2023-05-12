@@ -1,3 +1,37 @@
 from django.db import models
 
 # Create your models here.
+class Place(models.Model):
+    areaName = models.CharField(max_length=50)
+    partName = models.CharField(max_length=50)
+    title = models.CharField(max_length=200)
+    keyword = models.CharField(max_length=250)
+    address = models.CharField(max_length=300)
+    latitude = models.FloatField(null=False)
+    longitude = models.FloatField(null=False)
+    tel = models.CharField(max_length=30)
+    usedTime = models.CharField(max_length=200)
+    homePage = models.URLField()
+    content = models.TextField()
+    provisionSupply = models.CharField(max_length=300)
+    petFacility = models.CharField(max_length=300)
+    restaurant = models.CharField(max_length=300)
+    parkingLog = models.CharField(max_length=300)
+    mainFacility = models.CharField(max_length=300)
+    usedCost = models.CharField(max_length=300)
+    policyCautions = models.CharField(max_length=300)
+    emergencyResponse = models.CharField(max_length=300)
+    memo = models.TextField()
+    bathFlag = models.CharField(max_length=10)
+    provisionFlag = models.CharField(max_length=10)
+    petFlag = models.CharField(max_length=10)
+    petWeight = models.CharField(max_length=10)
+    dogBreed = models.CharField(max_length=10)
+    emergencyFlag = models.CharField(max_length=10)
+    entranceFlag = models.CharField(max_length=10)
+    parkingFlag = models.CharField(max_length=10)
+    inOutFlag = models.CharField(max_length=10)
+
+class PlaceIMG(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    image = models.URLField()
