@@ -4,7 +4,8 @@ from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.hashers import check_password
-from .serializers import UserCreateSerializer, UserLoginSerializer
+from .serializers import UserCreateSerializer, UserLoginSerializer, UserSerializer
+import datetime
 
 # Create your views here.
 User = get_user_model()
@@ -47,6 +48,8 @@ def login(request):
 
         # user가 맞다면,
         if user is not None:
+            user.last_login = datetime.datetime.now()
+            user.save()
             token = TokenObtainPairSerializer.get_token(user) # refresh 토큰 생성
             refresh_token = str(token) # refresh 토큰 문자열화
             access_token = str(token.access_token) # access 토큰 문자열화
@@ -79,3 +82,9 @@ def logout(request):
         response.delete_cookie('refresh_token')
 
     return response
+
+@api_view(['GET'])
+def profile(request, username):
+    person = User.objects.get(username=username)
+    serializer = UserSerializer(person)
+    return Response(serializer.data)
