@@ -2,6 +2,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import Place, PlaceIMG, Review
 
+User = get_user_model()
+
 class PlaceListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
@@ -12,8 +14,23 @@ class PlaceIMGSerializer(serializers.ModelSerializer):
         model = PlaceIMG
         fields = '__all__'
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class AuthorSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ('username',)
+
+    user = AuthorSerializer(read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('user', 'star', 'content')
+        read_only_fields=('place', )
+
 class PlaceSerializer(serializers.ModelSerializer):
-    imageList = PlaceIMGSerializer(many=True) 
+    imageList = PlaceIMGSerializer(many=True, read_only=True) 
+    place_reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Place
