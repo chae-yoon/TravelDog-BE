@@ -7,4 +7,5 @@ urlpatterns = [
     path('<int:place_pk>/', views.placeDetail, name='placeDetail'),
     path('<int:place_pk>/review/', views.reviewList, name='reviewList'),
     path('<int:place_pk>/review/<int:review_pk>/', views.reviewDetail, name='reviewDetail'),
+    path('<int:place_pk>/review/<int:review_pk>/like/', views.reviewLike, name='reviewLike'),
 ]

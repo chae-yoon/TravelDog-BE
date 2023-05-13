@@ -67,3 +67,22 @@ def reviewDetail(request, place_pk, review_pk):
         return Response({"message": "해당 리뷰의 작성자가 아닙니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
     return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def reviewLike(request, place_pk, review_pk):
+    review = get_object_or_404(Review, pk=review_pk) 
+    jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+    token = request.COOKIES.get('token')
+
+    if token:
+        payload = jwt_decode_handler(token)
+        pk = payload.get('user_id')
+        user = get_object_or_404(User, pk=pk)
+        if review.like.filter(pk=user.pk).exists():
+            review.like.remove(user)
+            return Response({"message": "좋아요 취소 success"}, status=status.HTTP_200_OK)
+        else:
+            review.like.add(user)
+            return Response({"message": "좋아요 success"}, status=status.HTTP_200_OK)
+                
+    return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
