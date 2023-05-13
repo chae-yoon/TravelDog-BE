@@ -41,7 +41,7 @@ def reviewList(request, place_pk):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def reviewDetail(request, place_pk, review_pk):
     review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'GET':
@@ -60,6 +60,9 @@ def reviewDetail(request, place_pk, review_pk):
                 if serializer.is_valid(raise_exception=True):
                     serializer.save()
                     return Response(serializer.data)
+            elif request.method == 'DELETE':
+                review.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
                 
         return Response({"message": "해당 리뷰의 작성자가 아닙니다."}, status=status.HTTP_401_UNAUTHORIZED)
 
