@@ -34,7 +34,7 @@ class Place(models.Model):
     inOutFlag = models.CharField(max_length=10)
 
 class PlaceIMG(models.Model):
-    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='imageList')
     image = models.URLField()
 
 class Review(models.Model):
