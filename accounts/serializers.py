@@ -37,7 +37,7 @@ class UserCreateSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('username', 'password')
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
