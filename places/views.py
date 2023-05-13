@@ -86,3 +86,22 @@ def reviewLike(request, place_pk, review_pk):
             return Response({"message": "좋아요 success"}, status=status.HTTP_200_OK)
                 
     return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def placeBookmark(request, place_pk):
+    place = get_object_or_404(Place, pk=place_pk) 
+    jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+    token = request.COOKIES.get('token')
+
+    if token:
+        payload = jwt_decode_handler(token)
+        pk = payload.get('user_id')
+        user = get_object_or_404(User, pk=pk)
+        if place.bookmark.filter(pk=user.pk).exists():
+            place.bookmark.remove(user)
+            return Response({"message": "북마크 취소 success"}, status=status.HTTP_200_OK)
+        else:
+            place.bookmark.add(user)
+            return Response({"message": "북마크 success"}, status=status.HTTP_200_OK)
+                
+    return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)

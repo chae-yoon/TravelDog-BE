@@ -32,6 +32,7 @@ class Place(models.Model):
     entranceFlag = models.CharField(max_length=10)
     parkingFlag = models.CharField(max_length=10)
     inOutFlag = models.CharField(max_length=10)
+    bookmark = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='bookmark_place', blank=True)
 
 class PlaceIMG(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='imageList')
