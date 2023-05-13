@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 class Place(models.Model):
@@ -35,3 +36,14 @@ class Place(models.Model):
 class PlaceIMG(models.Model):
     place = models.ForeignKey(Place, on_delete=models.CASCADE)
     image = models.URLField()
+
+class Review(models.Model):
+    points = zip(range(1, 6), range(1, 6))
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_reviews')
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='place_reviews')
+    content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    like = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_reviews', blank=True)
+    star = models.IntegerField(choices=points)
