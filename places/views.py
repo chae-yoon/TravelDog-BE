@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, get_list_or_404
-from .serializers import PlaceListSerializer, PlaceSerializer, ReviewSerializer
+from .serializers import PlaceListSerializer, PlaceSerializer, ReviewSerializer, ReviewDetailSerializer
 from .models import Place, PlaceIMG, Review
 from rest_framework_jwt.settings import api_settings
 
@@ -39,4 +39,28 @@ def reviewList(request, place_pk):
                 serializer.save(place=place, user=user)
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT'])
+def reviewDetail(request, place_pk, review_pk):
+    review = get_object_or_404(Review, pk=review_pk)
+    if request.method == 'GET':
+        serializer = ReviewDetailSerializer(review)
+        return Response(serializer.data)
+    
+    jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+    token = request.COOKIES.get('token')
+    if token:
+        payload = jwt_decode_handler(token)
+        pk = payload.get('user_id')
+        user = get_object_or_404(User, pk=pk)
+        if user.pk == review.user.pk:
+            if request.method == 'PUT':
+                serializer = ReviewDetailSerializer(review, data=request.data)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+                    return Response(serializer.data)
+                
+        return Response({"message": "해당 리뷰의 작성자가 아닙니다."}, status=status.HTTP_401_UNAUTHORIZED)
+
     return Response({"message": "로그인이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)

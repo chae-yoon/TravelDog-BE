@@ -28,6 +28,12 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('user', 'star', 'content')
         read_only_fields=('place', )
 
+class ReviewDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+        read_only_fields=('place', 'user')
+
 class PlaceSerializer(serializers.ModelSerializer):
     imageList = PlaceIMGSerializer(many=True, read_only=True) 
     place_reviews = ReviewSerializer(many=True, read_only=True)
