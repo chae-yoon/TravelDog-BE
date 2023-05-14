@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import PlaceListSerializer, PlaceSerializer, ReviewSerializer, ReviewDetailSerializer
 from .models import Place, PlaceIMG, Review
 from rest_framework_jwt.settings import api_settings
+from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 User = get_user_model()
@@ -14,8 +15,12 @@ User = get_user_model()
 def placeList(request):
     if request.method == 'GET':
         places = get_list_or_404(Place)
-        serializer = PlaceListSerializer(places, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        paginator = PageNumberPagination()
+        result_page = paginator.paginate_queryset(places, request)
+        # serializer = PlaceListSerializer(places, many=True)
+        serializer = PlaceListSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def placeDetail(request, place_pk):
